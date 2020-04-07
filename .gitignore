@@ -1,0 +1,15 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/shorten
+shorten.so
+shorten.dylib
+shorten.dll
+shorten.a
+shorten.lib
+shorten-test-*
+*.exe
+*.o
+*.obj
+*.lst

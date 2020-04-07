@@ -1,0 +1,6 @@
+name "shortened"
+description "A very basic URL shortener."
+authors "Christian Köstlin"
+copyright "Copyright © 2020, Christian Köstlin"
+license "MIT"
+dependency "vibe-d" version="~>0.8.2"

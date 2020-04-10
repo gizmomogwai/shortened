@@ -2,8 +2,11 @@ doctype html
 html
   head
     script(type="text/javascript", src="https://code.jquery.com/jquery-3.4.1.min.js")
+    link(rel="stylesheet", type="text/css", href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css")
+    script(type="text/javascript", charset="utf-8", src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js")
     script(type="text/javascript").
       $(document).ready(function() {
+        $("table.shortened").DataTable();
         $(".add").bind("click", function(event) {
           var slug = $(event.target).prev().prev().prev().val();
           var url = $(event.target).prev().val();
@@ -63,19 +66,20 @@ html
     span URL  
     input
     button(class="add") Add
-    table
+    table(class="shortened display compact hover order-column row-border stripe")
       thead
         tr
           th Slug
           th URL
           th Operations
       tbody
-      - foreach(k, v; database.json.byKeyValue)
-        tr
-          td= k
-          td
-            input(value=v.get!string, original_value=v.get!string)
-          td
-            button(class="update") Update
-            button(class="delete") Delete
-        
+        - foreach(k, v; database.json.byKeyValue)
+          tr
+            td= k
+            td
+              span(style="display:none")= v.get!string
+              input(value=v.get!string, original_value=v.get!string)
+            td
+              button(class="update") Update
+              button(class="delete") Delete
+          

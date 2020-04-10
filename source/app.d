@@ -4,6 +4,7 @@ import std.algorithm;
 import std.array;
 import vibe.data.json;
 
+/// Database of all shortened urls
 class Database
 {
     Json json;
@@ -26,51 +27,78 @@ class Database
         }
     }
 
-    void update(string key, string value)
+    auto update(string id, string value)
     {
-        json[key] = value;
-        store();
+        if (lookup(id)) {
+            json[id] = value;
+            store();
+        }
+        return this;
     }
 
-    void remove(string key)
+    auto remove(string key)
     {
-        json.remove(key);
-        store();
+        if (lookup(key)) {
+            json.remove(key);
+            store();
+        }
+        return this;
     }
 
     private void store()
     {
         ubyte[] utf8 = cast(ubyte[]) json.serializeToPrettyJson;
-        writeFile("data2.json", utf8);
+        writeFile("data.json", utf8);
     }
 }
 
+unittest {
+    Json j = Json(["field1": Json("foo"), "field2": Json(42), "field3": Json(true)]);
+    assert("field1" in j);
+    j.remove("field1");
+    assert("field1" !in j);
+}
 auto webInterface(Database database)
 {
     class WebInterface
     {
         void index(HTTPServerResponse response)
         {
-            response.writeBody(database.json.serializeToPrettyJson);
+            response.render!("index.dt", database);
         }
 
         @method(HTTPMethod.GET) @path("*")
         void lookup(HTTPServerRequest request)
         {
-            auto to = database.lookup(request.requestPath.toString);
+            auto to = database.lookup(request.requestPath.toString[1..$]);
             if (to)
             {
                 redirect(to);
             }
         }
 
+        @method(HTTPMethod.DELETE) @path("*")
+        void deleteShort(HTTPServerRequest request, HTTPServerResponse response) {
+            auto slug = request.requestPath.toString[1..$];
+            database.remove(slug);
+            response.writeBody("All good");
+        }
+
+        @method(HTTPMethod.PUT) @path("*")
+        void updateShort(HTTPServerRequest request, HTTPServerResponse response) {
+            auto slug = request.requestPath.toString[1..$];
+            auto newUrl = getParameter(request, "newUrl");
+            database.update(slug, newUrl);
+            response.writeBody("All good");
+        }
+
         @method(HTTPMethod.POST) @path("*")
-        void postUpdate(HTTPServerRequest request)
+        void createUrl(HTTPServerRequest request)
         {
             auto newUrl = getParameter(request, "url");
             if (newUrl)
             {
-                database.update(request.requestPath.toString, newUrl);
+                database.update(request.requestPath.toString[1..$], newUrl);
                 redirect("/");
             }
             else

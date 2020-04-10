@@ -1,0 +1,57 @@
+doctype html
+html
+  head
+    script(type="text/javascript", src="https://code.jquery.com/jquery-3.4.1.min.js")
+    script(type="text/javascript").
+      $(document).ready(function() {
+        $(".delete").bind("click", function(event) {
+          var slug = $(event.target).parent().prev().prev().text();
+          $.ajax({
+            url: "/" + slug,
+            type: "DELETE",
+            success: function() {
+              alert("Alles klar");
+            },
+            error: function() {
+              alert("Cannot delete " + slug);
+            },
+          });
+        });
+        $(".update").bind("click", function(event) {
+          var urlInput = $($(event.target).parent().prev().children()[0]);
+          var slug = $(event.target).parent().prev().prev().text();
+
+          $.ajax({
+            url: "/" + slug,
+            type: "PUT",
+            contentType: "application/json",
+            data: JSON.stringify({
+              newUrl: urlInput.val() 
+            }),
+            success: function() {
+              alert("Alles klar");
+            },
+            error: function() {
+              alert("Cannot update " + slug);
+            },
+          });
+        });
+      });
+    title Shortened
+  body
+    table
+      thead
+        tr
+          th Slug
+          th URL
+          th Operations
+      tbody
+      - foreach(k, v; database.json.byKeyValue)
+        tr
+          td= k
+          td
+            input(value=v.get!string, original_value=v.get!string)
+          td
+            button(class="update") Update
+            button(class="delete") Delete
+        

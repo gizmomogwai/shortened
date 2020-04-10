@@ -13,3 +13,5 @@ shorten-test-*
 *.o
 *.obj
 *.lst
+/shortened
+/data.json

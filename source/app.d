@@ -29,10 +29,8 @@ class Database
 
     auto update(string id, string value)
     {
-        if (lookup(id)) {
-            json[id] = value;
-            store();
-        }
+        json[id] = value;
+        store();
         return this;
     }
 
@@ -95,6 +93,7 @@ auto webInterface(Database database)
         @method(HTTPMethod.POST) @path("*")
         void createUrl(HTTPServerRequest request)
         {
+            writeln("create url");
             auto newUrl = getParameter(request, "url");
             if (newUrl)
             {

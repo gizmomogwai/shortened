@@ -4,6 +4,25 @@ html
     script(type="text/javascript", src="https://code.jquery.com/jquery-3.4.1.min.js")
     script(type="text/javascript").
       $(document).ready(function() {
+        $(".add").bind("click", function(event) {
+          var slug = $(event.target).prev().prev().prev().val();
+          var url = $(event.target).prev().val();
+          $.ajax({
+            url: "/" + slug,
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({
+              url: url,
+            }),
+            success: function() {
+              alert("Alles klar");
+              location.reload();
+            },
+            error: function() {
+              alert("Cannot create " + slug + " with url " + url);
+            },
+          });
+        });
         $(".delete").bind("click", function(event) {
           var slug = $(event.target).parent().prev().prev().text();
           $.ajax({
@@ -39,6 +58,11 @@ html
       });
     title Shortened
   body
+    span Slug
+    input
+    span URL  
+    input
+    button(class="add") Add
     table
       thead
         tr

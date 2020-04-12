@@ -1,3 +1,8 @@
 * Small url shortener webservice
+Just a small single threaded vibe application.
 
-** TODO table with forms
+** Server
+Database is just a json file. Might not work well with big databases.
+
+** WebUI
+To get nice editable forms, its not real forms that are used, but just input fields + javascript.

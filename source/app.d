@@ -36,7 +36,8 @@ class Database
 
     auto remove(string key)
     {
-        if (lookup(key)) {
+        if (lookup(key))
+        {
             json.remove(key);
             store();
         }
@@ -50,12 +51,18 @@ class Database
     }
 }
 
-unittest {
-    Json j = Json(["field1": Json("foo"), "field2": Json(42), "field3": Json(true)]);
+unittest
+{
+    Json j = Json([
+            "field1": Json("foo"),
+            "field2": Json(42),
+            "field3": Json(true)
+            ]);
     assert("field1" in j);
     j.remove("field1");
     assert("field1" !in j);
 }
+
 auto webInterface(Database database)
 {
     class WebInterface
@@ -68,7 +75,7 @@ auto webInterface(Database database)
         @method(HTTPMethod.GET) @path("*")
         void lookup(HTTPServerRequest request)
         {
-            auto to = database.lookup(request.requestPath.toString[1..$]);
+            auto to = database.lookup(request.requestPath.toString[1 .. $]);
             if (to)
             {
                 redirect(to);
@@ -76,15 +83,17 @@ auto webInterface(Database database)
         }
 
         @method(HTTPMethod.DELETE) @path("*")
-        void deleteShort(HTTPServerRequest request, HTTPServerResponse response) {
-            auto slug = request.requestPath.toString[1..$];
+        void deleteShort(HTTPServerRequest request, HTTPServerResponse response)
+        {
+            auto slug = request.requestPath.toString[1 .. $];
             database.remove(slug);
             response.writeBody("All good");
         }
 
         @method(HTTPMethod.PUT) @path("*")
-        void updateShort(HTTPServerRequest request, HTTPServerResponse response) {
-            auto slug = request.requestPath.toString[1..$];
+        void updateShort(HTTPServerRequest request, HTTPServerResponse response)
+        {
+            auto slug = request.requestPath.toString[1 .. $];
             auto newUrl = getParameter(request, "newUrl");
             database.update(slug, newUrl);
             response.writeBody("All good");
@@ -97,7 +106,7 @@ auto webInterface(Database database)
             auto newUrl = getParameter(request, "url");
             if (newUrl)
             {
-                database.update(request.requestPath.toString[1..$], newUrl);
+                database.update(request.requestPath.toString[1 .. $], newUrl);
                 redirect("/");
             }
             else
